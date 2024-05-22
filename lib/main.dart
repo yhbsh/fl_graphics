@@ -54,10 +54,12 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
 
 class Painter extends CustomPainter {
   static final positions = Float32List(6);
-
   static const radius = 100;
-
   static const comp = 0xFF;
+  static final colors = Int32List(3);
+  static final indices = Uint16List(3);
+  static final p = Paint();
+
   final Animation<double> angle;
   Painter({required this.angle}) : super(repaint: angle);
 
@@ -90,12 +92,16 @@ class Painter extends CustomPainter {
     const green = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (comp  << 8 * 1) | (0x00  << 8 * 0);
     const blue  = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (0x00  << 8 * 1) | (comp  << 8 * 0);
 
-    final colors = Int32List.fromList([red, green, blue]);
-    final indices = Uint16List.fromList([0, 1, 2]);
-    final vertices = Vertices.raw(VertexMode.triangles, positions, indices: indices, colors: colors);
+    colors[0]  = red;
+    colors[1]  = green;
+    colors[2]  = blue;
 
-    final paint = Paint();
-    canvas.drawVertices(vertices, BlendMode.src, paint);
+    indices[0] = 0;
+    indices[1] = 1;
+    indices[2] = 2;
+
+    final vertices = Vertices.raw(VertexMode.triangles, positions, indices: indices, colors: colors);
+    canvas.drawVertices(vertices, BlendMode.src, p);
   }
 
   @override
