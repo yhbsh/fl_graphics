@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'dart:ui';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -15,14 +15,28 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
+
 class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
-  late final controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000), animationBehavior: AnimationBehavior.preserve, lowerBound: 0.0, upperBound: 2 * pi);
-  double sliderValue = 0.0;
+  late final controller = AnimationController(
+    vsync: this, 
+    duration: const Duration(milliseconds: 2000), 
+    upperBound: 2 * pi,
+  );
 
   @override
-  void initState() {
-    super.initState();
-    controller.repeat(reverse: false);
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      showPerformanceOverlay: true,
+      color: Colors.black,
+      home: Material(
+        color: Colors.black,
+        child: CustomPaint(
+          painter: Painter(
+            angle: controller,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -32,100 +46,56 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      showPerformanceOverlay: true,
-      color: Colors.black,
-      home: Material(
-        color: Colors.black,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned.fill(
-              child: CustomPaint(
-                painter: Painter(
-                  angle: controller,
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 30,
-              right: 30,
-              child: StatefulBuilder(
-                builder: (context, setState) {
-                  return Slider(
-                    value: sliderValue,
-                    max: 2 * pi,
-                    onChanged: (value) {
-                      setState(() {
-                        sliderValue = value;
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    controller.repeat(reverse: false);
   }
 }
 
 class Painter extends CustomPainter {
-  Painter({required this.angle}) : super(repaint: angle);
+  static final positions = Float32List(6);
 
+  static const radius = 100;
+
+  static const comp = 0xFF;
   final Animation<double> angle;
+  Painter({required this.angle}) : super(repaint: angle);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final originalPositions = Float32List(6);
-    final positions = Float32List(6);
+    positions[0] = size.width  * 0.50;
+    positions[1] = size.height * 0.50 - radius;
 
-    const radius = 100;
-    originalPositions[0] = size.width  * 0.50;
-    originalPositions[1] = size.height * 0.50 - radius;
+    positions[2] = size.width  * 0.50 - radius;
+    positions[3] = size.height * 0.50 + radius;
 
-    originalPositions[2] = size.width  * 0.50 - radius;
-    originalPositions[3] = size.height * 0.50 + radius;
+    positions[4] = size.width  * 0.50 + radius;
+    positions[5] = size.height * 0.50 + radius;
 
-    originalPositions[4] = size.width  * 0.50 + radius;
-    originalPositions[5] = size.height * 0.50 + radius;
-
-    final centerX = (originalPositions[0] + originalPositions[2] + originalPositions[4]) / 3;
-    final centerY = (originalPositions[1] + originalPositions[3] + originalPositions[5]) / 3;
+    final center_x = (positions[0] + positions[2] + positions[4]) / 3;
+    final center_y = (positions[1] + positions[3] + positions[5]) / 3;
 
     for (int i = 0; i < 6; i += 2) {
-      final x = originalPositions[i] - centerX;
-      final y = originalPositions[i + 1] - centerY;
+      final x = positions[i + 0] - center_x;
+      final y = positions[i + 1] - center_y;
 
-      final rotatedX = x * cos(angle.value) + y * sin(angle.value);
-      final rotatedY = x * sin(angle.value) + y * cos(angle.value);
+      final rotated_x = x * cos(angle.value) + y * sin(angle.value);
+      final rotated_y = x * sin(angle.value) + y * cos(angle.value);
 
-      positions[i + 0] = rotatedX + centerX;
-      positions[i + 1] = rotatedY + centerY;
+      positions[i + 0] = rotated_x + center_x;
+      positions[i + 1] = rotated_y + center_y;
     }
 
-    const value = 0xFF;
-    const red   = (0xFF << 8 * 3) | (value << 8 * 2) | (0x00  << 8 * 1) | (0x00  << 8 * 0);
-    const green = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (value << 8 * 1) | (0x00  << 8 * 0);
-    const blue  = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (0x00  << 8 * 1) | (value << 8 * 0);
+    const red   = (0xFF << 8 * 3) | (comp  << 8 * 2) | (0x00  << 8 * 1) | (0x00  << 8 * 0);
+    const green = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (comp  << 8 * 1) | (0x00  << 8 * 0);
+    const blue  = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (0x00  << 8 * 1) | (comp  << 8 * 0);
 
     final colors = Int32List.fromList([red, green, blue]);
     final indices = Uint16List.fromList([0, 1, 2]);
-    final vertices = Vertices.raw(
-      VertexMode.triangles,
-      positions,
-      indices: indices,
-      colors: colors,
-    );
+    final vertices = Vertices.raw(VertexMode.triangles, positions, indices: indices, colors: colors);
 
     final paint = Paint();
-    canvas.drawVertices(
-      vertices,
-      BlendMode.src,
-      paint,
-    );
+    canvas.drawVertices(vertices, BlendMode.src, paint);
   }
 
   @override
