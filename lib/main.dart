@@ -15,11 +15,10 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
-
 class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
   late final controller = AnimationController(
-    vsync: this, 
-    duration: const Duration(milliseconds: 2000), 
+    vsync: this,
+    duration: const Duration(milliseconds: 2000),
     upperBound: 2 * pi,
   );
 
@@ -54,13 +53,14 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
 
 class Painter extends CustomPainter {
   static final positions = Float32List(6);
-  static const radius = 100;
-  static const comp = 0xFF;
-  static final colors = Int32List(3);
-  static final indices = Uint16List(3);
-  static final p = Paint();
+  static const radius    = 100;
+  static const comp      = 0xFF;
+  static final colors    = Int32List(3);
+  static final indices   = Uint16List(3);
+  static final p         = Paint();
 
   final Animation<double> angle;
+
   Painter({required this.angle}) : super(repaint: angle);
 
   @override
@@ -88,13 +88,13 @@ class Painter extends CustomPainter {
       positions[i + 1] = rotated_y + center_y;
     }
 
-    const red   = (0xFF << 8 * 3) | (comp  << 8 * 2) | (0x00  << 8 * 1) | (0x00  << 8 * 0);
-    const green = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (comp  << 8 * 1) | (0x00  << 8 * 0);
-    const blue  = (0xFF << 8 * 3) | (0x00  << 8 * 2) | (0x00  << 8 * 1) | (comp  << 8 * 0);
+    const r = (0xFF << 8 * 3) | (comp << 8 * 2) | (0x00 << 8 * 1) | (0x00 << 8 * 0);
+    const g = (0xFF << 8 * 3) | (0x00 << 8 * 2) | (comp << 8 * 1) | (0x00 << 8 * 0);
+    const b = (0xFF << 8 * 3) | (0x00 << 8 * 2) | (0x00 << 8 * 1) | (comp << 8 * 0);
 
-    colors[0]  = red;
-    colors[1]  = green;
-    colors[2]  = blue;
+    colors[0] = r;
+    colors[1] = g;
+    colors[2] = b;
 
     indices[0] = 0;
     indices[1] = 1;
