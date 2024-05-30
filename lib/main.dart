@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const MainApp());
@@ -24,17 +24,10 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      showPerformanceOverlay: true,
-      color: Colors.black,
-      home: Material(
-        color: Colors.black,
-        child: CustomPaint(
-          painter: Painter(
-            angle: controller,
-          ),
-        ),
-      ),
+    return WidgetsApp(
+        showPerformanceOverlay: true,
+        color: const Color(0xFF000000),
+        builder: (_, __) => Center(child: CustomPaint(painter: Painter(angle: controller))),
     );
   }
 
