@@ -6,25 +6,25 @@ import 'package:flutter/widgets.dart';
 
 class TrianglePainter extends CustomPainter {
   static final positions = Float32List(6);
-  static const radius    = 100;
-  static const comp      = 0xFF;
-  static final colors    = Int32List(3);
-  static final indices   = Uint16List(3);
-  static final p         = Paint();
+  static const radius = 100;
+  static const comp = 0xFF;
+  static final colors = Int32List(3);
+  static final indices = Uint16List(3);
+  static final p = Paint();
 
-  final Animation<double> angle;
+  final Animation<double> animation;
 
-  TrianglePainter({required this.angle}) : super(repaint: angle);
+  TrianglePainter({required this.animation}) : super(repaint: animation);
 
   @override
   void paint(Canvas canvas, Size size) {
-    positions[0] = size.width  * 0.50;
+    positions[0] = size.width * 0.50;
     positions[1] = size.height * 0.50 - radius;
 
-    positions[2] = size.width  * 0.50 - radius;
+    positions[2] = size.width * 0.50 - radius;
     positions[3] = size.height * 0.50 + radius;
 
-    positions[4] = size.width  * 0.50 + radius;
+    positions[4] = size.width * 0.50 + radius;
     positions[5] = size.height * 0.50 + radius;
 
     final center_x = (positions[0] + positions[2] + positions[4]) / 3;
@@ -34,8 +34,8 @@ class TrianglePainter extends CustomPainter {
       final x = positions[i + 0] - center_x;
       final y = positions[i + 1] - center_y;
 
-      final rotated_x = x * cos(angle.value) + y * sin(angle.value);
-      final rotated_y = x * sin(angle.value) + y * cos(angle.value);
+      final rotated_x = x * cos(animation.value) + y * sin(animation.value);
+      final rotated_y = x * sin(animation.value) + y * cos(animation.value);
 
       positions[i + 0] = rotated_x + center_x;
       positions[i + 1] = rotated_y + center_y;
@@ -59,6 +59,6 @@ class TrianglePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(TrianglePainter oldDelegate) {
-    return oldDelegate.angle.value != angle.value;
+    return oldDelegate.animation.value != animation.value;
   }
 }
