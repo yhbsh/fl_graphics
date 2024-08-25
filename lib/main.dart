@@ -2,7 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
-import 'triangle_painter.dart';
+import 'cube.dart';
+import 'octahendron.dart';
+import 'pentagonal_bypyramid.dart';
+import 'triangle.dart';
 
 void main() {
   runApp(const MainApp());
@@ -37,10 +40,16 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return WidgetsApp(
-        showPerformanceOverlay: true,
-        color: const Color(0xFF000000),
-        builder: (_, __) => Center(child: CustomPaint(painter: TrianglePainter(angle: controller))),
+      color: const Color(0xFF000000),
+      builder: (_, __) => GridView.count(
+        crossAxisCount: 3,
+        children: [
+          CustomPaint(painter: TrianglePainter(animation: controller)),
+          CustomPaint(painter: CubePainter(animation: controller)),
+          CustomPaint(painter: PentagonalBipyramidPainter(animation: controller)),
+          CustomPaint(painter: OctahedronPainter(animation: controller)),
+        ],
+      ),
     );
   }
-
 }
