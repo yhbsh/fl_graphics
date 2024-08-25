@@ -1,4 +1,4 @@
-name: flutter_graphics
+name: fl_graphics
 description: Graphics in flutter using custom paint
 version: 1.0.0
 
@@ -8,6 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  vector_math: ^2.1.4
 
 
 dev_dependencies:
